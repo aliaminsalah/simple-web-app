@@ -4,15 +4,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/aliaminsalah/simple-web-app.git'
+                git branch: 'main', url: 'https://github.com/aliaminsalah/simple-web-app.git'
             }
         }
         
         stage('Build & Test') {
             steps {
                 script {
-                    sh 'docker-compose down'
+                    sh 'docker-compose down || true' 
                     sh 'docker-compose up --build -d'
+                   
+                    sh 'sleep 10' 
                 }
             }
         }
@@ -20,12 +22,14 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying the application...'
+               
             }
         }
     }
     
     post {
         always {
+            echo 'Shutting down any running containers...'
             sh 'docker-compose down'
         }
     }
